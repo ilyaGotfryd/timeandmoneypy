@@ -1,12 +1,5 @@
 from decimal import *
-from enum import Enum
 
-class Rounding(Enum):
-    UNNECESSARY = (0, None)
-    DOWN = (1, ROUND_DOWN)
-    UP = (2, ROUND_UP)
-    HALF_DOWN = (3, ROUND_HALF_DOWN)
-    HALF_UP = (4, ROUND_HALF_UP)
 
 class Ratio:
     def __init__(self, numerator, denominator):
@@ -19,5 +12,25 @@ class Ratio:
         return Ratio(numerator, denominator)
 
     def decimal_value(self, scale, rounding_rule):
-        return self._numerator / self._denominator
+        precision_str = '0.{}1'.format(''if scale-1 == 0 else '0'*(scale-1))
+        return (self._numerator / self._denominator).quantize(Decimal(precision_str), rounding=rounding_rule.value[1])
 
+    def __eq__(self, other):
+        if other is None:
+            return False
+        if isinstance(other, Ratio):
+            return self._numerator == other._numerator and self._denominator == other._denominator
+        else:
+            raise TypeError('Expected Ratio but presented {} type '.format(other.__class__))
+
+    def times(self, multiplier):
+        if isinstance(multiplier, Ratio):
+            return Ratio(self._numerator * multiplier._numerator, self._denominator * multiplier._denominator)
+        else:
+            return Ratio(self._numerator * Decimal(multiplier), self._denominator)
+
+    def __mul__(self, other):
+        return self.times(other)
+
+    def __str__(self):
+        return "{}/{}".format(self._numerator, self._denominator)
