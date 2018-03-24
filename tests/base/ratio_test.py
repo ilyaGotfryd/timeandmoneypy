@@ -1,11 +1,14 @@
 from unittest import TestCase
 from hamcrest import *
 
+from decimal import *
+from timeandmoneypy.base.ratio import Ratio, Rounding
+
 class RatioTest(TestCase):
-    def test_big_decimal_ratio() {
-        Ratio r3over2 = Ratio.of(new BigDecimal(3), new BigDecimal(2));
-        BigDecimal result = r3over2.decimalValue(1, Rounding.UNNECESSARY);
-        assertEquals(new BigDecimal("1.5"), result);
+    def test_big_decimal_ratio(self):
+        r3over2 = Ratio.of(Decimal(3), Decimal(2));
+        result = r3over2.decimal_value(1, Rounding.UNNECESSARY);
+        assert_that(1.5, equal_to(result));
 
         # Ratio r10over3 = Ratio.of(new BigDecimal(10), new BigDecimal(3));
         # result = r10over3.decimalValue(3, Rounding.DOWN);
@@ -23,4 +26,3 @@ class RatioTest(TestCase):
         #
         # result = rManyDigits.decimalValue(7, Rounding.HALF_UP);
         # assertEquals(new BigDecimal("3.0003333"), result);
-    }
