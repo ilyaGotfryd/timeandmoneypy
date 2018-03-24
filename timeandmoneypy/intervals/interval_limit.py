@@ -33,7 +33,7 @@ class IntervalLimit():
                 return 0
             if self._value is None:
                 return -1 if self._lower else 1
-            if other.get_value() is None
+            if other.get_value() is None:
                 return 1 if other.is_lower() else -1
             return -1 if self._value < other.get_value() else \
                     1 if self._value > other.get_value() else 0
