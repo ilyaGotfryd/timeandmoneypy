@@ -108,7 +108,7 @@ class Interval:
     def is_above(self, value):
         if not self.has_lower_limit():
             return False
-        comparison = local_compare_to(self.has_lower_limit(), value)
+        comparison = local_compare_to(self.lower_limit(), value)
         return comparison > 0 or (comparison == 0 and not self.includes_lower_limit())
 
     def includes(self, value):
