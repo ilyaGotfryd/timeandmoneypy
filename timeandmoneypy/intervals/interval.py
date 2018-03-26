@@ -60,6 +60,9 @@ class Interval:
     def new_of_same_type(self, lower,  is_lower_closed, upper, is_upper_closed):
         return Interval(lower, is_lower_closed, upper, is_upper_closed)
 
+    def empty_of_same_type(self):
+        return self.new_of_same_type(self.lower_limit(), False, self.lower_limit(), False)
+
     def compare_to(self, other):
         if not self.upper_limit() == other.upper_limit():
             return local_compare_to(self.upper_limit(), other.upper_limit())
@@ -113,3 +116,60 @@ class Interval:
 
     def includes(self, value):
         return not self.is_below(value) and not self.is_above(value)
+
+    def intersects(self, other):
+        comparison = local_compare_to(self.greater_of_lower_limits(other), self.lesser_of_upper_limits(other))
+        if comparison < 0:
+            return True
+        if comparison > 0:
+            return False
+        return self._greater_of_lower_included_in_intersection(other) and \
+               self._lesser_of_upper_included_in_intersection(other)
+
+    def lesser_of_lower_limits(self, other):
+        if self.lower_limit() is None:
+            return None
+        lower_comparison = self.lower_limit().compareTo(other.lower_limit())
+        if lower_comparison <= 0:
+            return self.lower_limit()
+        return other.lower_limit()
+
+    def greater_of_lower_limits(self, other):
+        if self.lower_limit() is None:
+            return other.lower_limit()
+        lower_comparison = local_compare_to(self.lower_limit(), other.lower_limit())
+        if lower_comparison >= 0:
+            return self.lower_limit()
+        return other.lower_limit()
+
+    def lesser_of_upper_limits(self, other):
+        if self.upper_limit() is None:
+            return other.upperLimit();
+        upper_comparison = local_compare_to(self.upper_limit(), other.upper_limit())
+        if upper_comparison <= 0:
+            return self.upper_limit()
+        return other.upper_limit()
+
+    def greater_of_upper_limits(self, other):
+        if self.upper_limit()is None:
+            return None
+        upper_comparison = local_compare_to(self.upper_limit(), other.upper_limit())
+        if upper_comparison >= 0:
+            return self.upper_limit()
+        return other.upper_limit()
+
+    def _greater_of_lower_included_in_intersection(self, other):
+        limit = self.greater_of_lower_limits(other)
+        return self.includes(limit) and other.includes(limit)
+
+    def _lesser_of_upper_included_in_intersection(self, other):
+        limit = self.lesser_of_upper_limits(other)
+        return self.includes(limit) and other.includes(limit)
+
+    def _greater_of_lower_included_in_union(self, other):
+        limit = self.greater_of_lower_limits(other)
+        return self.includes(limit) or other.includes(limit)
+
+    def _lesser_of_upper_included_in_union(self, other):
+        limit = self.lesser_of_upper_limits(other)
+        return self.includes(limit) or other.includes(limit)

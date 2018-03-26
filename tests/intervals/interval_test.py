@@ -43,3 +43,32 @@ class IntervalTest(TestCase):
         assert_that(range.includes(Decimal(6.6)), equal_to(True))
         assert_that(range.includes(Decimal(6.601)), equal_to(False))
         assert_that(range.includes(Decimal(-5.501)), equal_to(False))
+
+    def test_open_interval(self):
+        exRange = Interval.over(Decimal(-5.5), False, Decimal(6.6), True)
+        assert_that(exRange.includes(Decimal(5.0)), equal_to(True))
+        assert_that(exRange.includes(Decimal(-5.5)), equal_to(False))
+        assert_that(exRange.includes(Decimal(-5.4999)), equal_to(True))
+        assert_that(exRange.includes(Decimal(6.6)), equal_to(True))
+        assert_that(exRange.includes(Decimal(6.601)), equal_to(False))
+        assert_that(exRange.includes(Decimal(-5.501)), equal_to(False))
+
+    def test_is_empty(self):
+        assert_that(Interval.closed(5, 6).is_empty(), equal_to(False))
+        assert_that(Interval.closed(6, 6).is_empty(), equal_to(False))
+        assert_that(Interval.open(6, 6).is_empty(), equal_to(True))
+        assert_that(self.c1_10c.empty_of_same_type().is_empty(), equal_to(True))
+
+    def testIntersects(self):
+        assert_that(self.c5_10c.intersects(self.c1_10c), equal_to(True), "c5_10c.intersects(c1_10c)")
+        assert_that(self.c1_10c.intersects(self.c5_10c), equal_to(True), "c1_10c.intersectsself.(c5_10c)")
+        assert_that(self.c4_6c.intersects(self.c1_10c), equal_to(True), "c4_6c.intersects(c1_10c)")
+        assert_that(self.c1_10c.intersects(self.c4_6c), equal_to(True), "c1_10c.intersects(c4_6c)")
+        assert_that(self.c5_10c.intersects(self.c5_15c), equal_to(True), "c5_10c.intersects(c5_15c)")
+        assert_that(self.c5_15c.intersects(self.c1_10c), equal_to(True), "c5_15c.intersects(c1_10c)")
+        assert_that(self.c1_10c.intersects(self.c5_15c), equal_to(True), "c1_10c.intersects(c5_15c)")
+        assert_that(self.c1_10c.intersects(self.c12_16c), equal_to(False), "c1_10c.intersects(c12_16c)")
+        assert_that(self.c12_16c.intersects(self.c1_10c), equal_to(False), "c12_16c.intersects(c1_10c)")
+        assert_that(self.c5_10c.intersects(self.c5_10c), equal_to(True), "c5_10c.intersects(c5_10c)")
+        assert_that(self.c1_10c.intersects(self.o10_12c), equal_to(False), "c1_10c.intersects(o10_12c)")
+        assert_that(self.o10_12c.intersects(self.c1_10c), equal_to(False), "o10_12c.intersects(c1_10c)")
