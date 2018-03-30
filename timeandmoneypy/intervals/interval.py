@@ -173,3 +173,12 @@ class Interval:
     def _lesser_of_upper_included_in_union(self, other):
         limit = self.lesser_of_upper_limits(other)
         return self.includes(limit) or other.includes(limit)
+
+    def intersect(self, other):
+        intersect_lower_bound = self.greater_of_lower_limits(other)
+        intersect_upper_bound = self.lesser_of_upper_limits(other)
+        if local_compare_to(intersect_lower_bound, intersect_upper_bound) > 0:
+            return self.empty_of_same_type()
+        return self.new_of_same_type(intersect_lower_bound, self._greater_of_lower_included_in_intersection(other),
+                                     intersect_upper_bound, self._lesser_of_upper_included_in_intersection(other))
+

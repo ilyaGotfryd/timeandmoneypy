@@ -72,3 +72,18 @@ class IntervalTest(TestCase):
         assert_that(self.c5_10c.intersects(self.c5_10c), equal_to(True), "c5_10c.intersects(c5_10c)")
         assert_that(self.c1_10c.intersects(self.o10_12c), equal_to(False), "c1_10c.intersects(o10_12c)")
         assert_that(self.o10_12c.intersects(self.c1_10c), equal_to(False), "o10_12c.intersects(c1_10c)")
+
+    def testIntersection(self):
+        assert_that(self.c5_10c, equal_to(self.c5_10c.intersect(self.c1_10c)))
+        assert_that(self.c5_10c, equal_to(self.c1_10c.intersect(self.c5_10c)))
+        assert_that(self.c4_6c, equal_to(self.c4_6c.intersect(self.c1_10c)))
+        assert_that(self.c4_6c, equal_to(self.c1_10c.intersect(self.c4_6c)))
+        assert_that(self.c5_10c, equal_to(self.c5_10c.intersect(self.c5_15c)))
+        assert_that(self.c5_10c, equal_to(self.c5_15c.intersect(self.c1_10c)))
+        assert_that(self.c5_10c, equal_to(self.c1_10c.intersect(self.c5_15c)))
+        assert_that(self.c1_10c.intersect(self.c12_16c).is_empty(), equal_to(True))
+        assert_that(self.empty, equal_to(self.c1_10c.intersect(self.c12_16c)))
+        assert_that(self.empty, equal_to(self.c12_16c.intersect(self.c1_10c)))
+        assert_that(self.c5_10c, equal_to(self.c5_10c.intersect(self.c5_10c)))
+        # assertEquals(empty, c1_10c.intersect(o10_12c))
+        # assertEquals(empty, o10_12c.intersect(c1_10c))
