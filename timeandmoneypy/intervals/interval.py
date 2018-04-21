@@ -225,3 +225,9 @@ class Interval:
         if self.upper_limit() == other.upper_limit() and not other.includes_upper_limit():
             return None
         return self.new_of_same_type(self.upper_limit(), not self.includes_upper_limit(), other.upper_limit(), other.includes_upper_limit())
+
+    def __str__(self):
+        return "{}{}..{}{}".format("(" if self._lower_limit_object.is_opened() else "[",
+                            self.lower_limit(),
+                            self.upper_limit(),
+                            ")" if self._upper_limit_object.is_opened() else "]",)
