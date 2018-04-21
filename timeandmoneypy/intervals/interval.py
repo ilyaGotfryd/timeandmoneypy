@@ -52,7 +52,7 @@ class Interval:
         this_single = self.is_single_element()
         other_single = other.is_single_element()
         if this_single and other_single:
-            return self.lower_limit().equals(other.lower_limit())
+            return self.lower_limit() == other.lower_limit()
         if this_single != other_single:
             return False
         return self.compare_to(other) == 0
@@ -117,6 +117,13 @@ class Interval:
     def includes(self, value):
         return not self.is_below(value) and not self.is_above(value)
 
+    def covers(self, other):
+        lower_comparison = local_compare_to(self.lower_limit(), other.lower_limit())
+        lower_pass = self.includes(other.lower_limit()) or (lower_comparison == 0 and not other.includes_lower_limit())
+        upper_comparison = local_compare_to(self.upper_limit(), other.upper_limit())
+        upper_pass = self.includes(other.upper_limit()) or (upper_comparison == 0 and not other.includes_upper_limit())
+        return lower_pass and upper_pass
+
     def intersects(self, other):
         comparison = local_compare_to(self.greater_of_lower_limits(other), self.lesser_of_upper_limits(other))
         if comparison < 0:
@@ -129,7 +136,7 @@ class Interval:
     def lesser_of_lower_limits(self, other):
         if self.lower_limit() is None:
             return None
-        lower_comparison = self.lower_limit().compareTo(other.lower_limit())
+        lower_comparison = local_compare_to(self.lower_limit(), other.lower_limit())
         if lower_comparison <= 0:
             return self.lower_limit()
         return other.lower_limit()
@@ -182,3 +189,39 @@ class Interval:
         return self.new_of_same_type(intersect_lower_bound, self._greater_of_lower_included_in_intersection(other),
                                      intersect_upper_bound, self._lesser_of_upper_included_in_intersection(other))
 
+    def gap(self, other):
+        if self.intersects(other):
+            return self.empty_of_same_type()
+
+        return self.new_of_same_type(self.lesser_of_upper_limits(other),
+                                     not self._lesser_of_upper_included_in_union(other),
+                                     self.greater_of_lower_limits(other),
+                                     not self._greater_of_lower_included_in_union(other))
+
+    # see: http://en.wikipedia.org/wiki/Set_theoretic_complement
+    def complement_relative_to(self, other):
+        interval_sequence = []
+        if not self.intersects(other):
+            interval_sequence.append(other)
+            return interval_sequence
+        left = self._left_complement_relative_to(other)
+        if left is not None:
+            interval_sequence.append(left)
+        right = self._right_complement_relative_to(other)
+        if right is not None:
+            interval_sequence.append(right)
+        return interval_sequence
+
+    def _left_complement_relative_to(self, other):
+        if self.includes(self.lesser_of_lower_limits(other)):
+            return None
+        if self.lower_limit() == other.lower_limit() and not other.includes_lower_limit():
+            return None
+        return self.new_of_same_type(other.lower_limit(), other.includes_lower_limit(), self.lower_limit(), not self.includes_lower_limit())
+
+    def _right_complement_relative_to(self, other):
+        if self.includes(self.greater_of_upper_limits(other)):
+            return None
+        if self.upper_limit() == other.upper_limit() and not other.includes_upper_limit():
+            return None
+        return self.new_of_same_type(self.upper_limit(), not self.includes_upper_limit(), other.upper_limit(), other.includes_upper_limit())
