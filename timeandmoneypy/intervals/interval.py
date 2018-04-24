@@ -37,6 +37,9 @@ class Interval:
         self._create_with_intervals(IntervalLimit.lower(is_lower_closed, lower),
                                     IntervalLimit.upper(is_upper_closed, upper))
 
+    def __hash__(self):
+        return hash((hash(self._lower_limit_object), hash(self._upper_limit_object)))
+
     def __eq__(self, other):
         return self.equals(other)
 

@@ -59,3 +59,6 @@ class IntervalLimit():
 
     def __le__(self, other):
         return self.compare_to(other) in [-1,0]
+
+    def __hash__(self):
+        return hash((self._closed, self._lower, hash(str(self._value))))
