@@ -1,4 +1,4 @@
-from interval_limit import IntervalLimit
+from .interval_limit import IntervalLimit
 
 def local_compare_to(a, b):
     return -1 if a < b else 1 if a > b else 0

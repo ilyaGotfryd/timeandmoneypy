@@ -29,7 +29,7 @@ class RatioTest(TestCase):
         assert_that(result, Decimal("3.0003333"))
 
     def test_long_ratio(self):
-        rManyDigits = Ratio.of(9001l, 3000l)
+        rManyDigits = Ratio.of(9001, 3000)
         result = rManyDigits.decimal_value(6, Rounding.UP)
         assert_that(result, equal_to(Decimal("3.000334")))
 
