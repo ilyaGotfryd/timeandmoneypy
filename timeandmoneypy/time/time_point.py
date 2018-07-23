@@ -2,6 +2,7 @@ import pytz
 from datetime import datetime, tzinfo, timedelta
 
 
+
 class TimePoint(object):
     _GMT = pytz.timezone('GMT')
     _epoch = _GMT.localize(datetime.utcfromtimestamp(0))
@@ -63,10 +64,16 @@ class TimePoint(object):
     def as_datetime(self):
         return self._epoch + timedelta(milliseconds=self._milliseconds_from_epoch)
 
+    def back_to_midnight(self, zone):
+        raise NotImplemented("TimePoint.back_to_midnight(zone) is not implemented.")
+
     def __init__(self, milliseconds):
         self._milliseconds_from_epoch = milliseconds
 
     def __eq__(self, other):
         return isinstance(other, TimePoint) and \
                other._milliseconds_from_epoch == self._milliseconds_from_epoch
+
+    def __hash__(self):
+        return int(self._milliseconds_from_epoch)
 

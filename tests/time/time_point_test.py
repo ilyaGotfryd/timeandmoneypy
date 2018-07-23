@@ -2,6 +2,7 @@ from unittest import TestCase
 from hamcrest import *
 from pytz import timezone
 from timeandmoneypy.time.time_point import TimePoint
+from datetime import datetime
 
 class TimePointTest(TestCase):
     @classmethod
@@ -49,9 +50,21 @@ class TimePointTest(TestCase):
         assert_that(gmt_6_hour, equal_to(ct_0_hour))
         assert_that(gmt_6_hour, equal_to(ct_midnight))
 
-    def testStringFormat(self):
+    def test_string_format(self):
         point = TimePoint.at(2004, 3, 12, 5, 3, 14, 0, self.pt)
         # Try stupid date/time format, so that it couldn't work by accident.
         assert_that(point.to_string("%-m-%y-%d %-M:%-H:%-S", self.pt), equal_to("3-04-12 3:5:14"))
         assert_that(point.to_string("%-m-%y-%d", self.pt), equal_to("3-04-12"))
 
+    def python_datetime_dec20_2003(self):
+        return self.gmt.localize(datetime(2003, 12, 20, 0, 0, 0, 0))
+
+    def test_as_date_time(self):
+        dec20_2003 = TimePoint.at_midnight_GMT(2003, 12, 20)
+        assert_that(self.python_datetime_dec20_2003(), equal_to(dec20_2003.as_datetime()))
+
+    # def test_back_to_midnight(self):
+    #     three_o_clock = TimePoint.at_GMT(2004, 11, 22, 3, 0)
+    #     assert_that(TimePoint.at_midnight_GMT(2004, 11, 22), three_o_clock.back_to_midnight(self.gmt))
+    #     thirteen_o_clock = TimePoint.at_GMT(2004, 11, 22, 13, 0)
+    #     assert_that(TimePoint.at_midnight_GMT(2004, 11, 22), thirteen_o_clock.back_to_midnight(self.gmt))
