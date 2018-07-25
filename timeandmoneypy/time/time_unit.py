@@ -80,6 +80,9 @@ class TimeUnit(TimeUnitConversionFactors):
     def __cmp__(self, other):
         return self.compare_to(other)
 
+    def __lt__(self, other):
+        return self.compare_to(other) < 0
+
     def descending_units(self):
         return self.descending_millisecond_based if self.is_convertible_to_milliseconds() else self.descending_month_based
 

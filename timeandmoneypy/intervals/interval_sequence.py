@@ -1,3 +1,6 @@
+import functools
+
+
 class IntervalSequence():
 
     def __init__(self):
@@ -8,7 +11,7 @@ class IntervalSequence():
 
     def add(self, interval):
         self._intervals.append(interval)
-        self._intervals.sort(lambda a, b: a.compare_to(b))
+        self._intervals.sort(key=functools.cmp_to_key(lambda a, b: a.compare_to(b)))
 
     def is_empty(self):
         return len(self._intervals) == 0
