@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ilyaGotfryd/timeandmoneypy.png?branch=master)](https://travis-ci.org/ilyaGotfryd/timeandmoneypy)
+
 _This is a port of timeandmoney library ported from Java to Python
 originally implemented by Eric Evans and Martin Fowler. It was later
 rescued from http://timeandmoney.sourceforge.net/ and updeted with times
